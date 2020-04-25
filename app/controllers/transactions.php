@@ -27,6 +27,21 @@ class Transactions extends CI_Controller {
     $this->load->view('layouts/main',$data);
   }
 
+    function view_transactions_member(){
+
+    $name = $this->session->userdata('user_name');
+
+    $id = $this->session->userdata('user_id');
+
+    $data['name'] = $name;
+
+    $data['id'] = $id;
+
+    $data['member_transactions'] = $this->Transactions_model->get_member_transactions2();
+
+    $data['main_content'] = 'transactions/members2';
+    $this->load->view('layouts/main',$data);
+  }
 
 
   function view_transactions_time($year,$id,$name){

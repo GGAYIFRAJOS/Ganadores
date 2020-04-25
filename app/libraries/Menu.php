@@ -90,6 +90,11 @@ class Menu {
 					'function' => 'attendance'
 				),
 				array(
+					'text' => 'Attendance List', 
+					'controller' => 'members', 
+					'function' => 'attendance_list'
+				),
+				array(
 					'text' => 'Add Member', 
 					'controller' => 'members', 
 					'function' => 'add_member'
@@ -122,14 +127,14 @@ class Menu {
 
 			'submenu' => array(
 				array(
-					'text' => 'Expenses', 
-					'controller' => 'expenses', 
-					'function' => 'show_expenses'
+					'text' => 'Add Expenses', 
+					'controller' => 'members', 
+					'function' => 'add_expenses'
 				),
 				array(
 					'text' => 'Expenses List', 
-					'controller' => 'expenses', 
-					'function' => 'add_expenses'
+					'controller' => 'members', 
+					'function' => 'show_expenses'
 				)
 			)
 		);

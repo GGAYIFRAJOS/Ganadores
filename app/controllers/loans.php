@@ -183,6 +183,18 @@ class Loans extends CI_Controller {
         $data['main_content'] = 'loans/show_general';
         $this->load->view('layouts/main',$data);
     }
+
+    public function show_loan_member(){
+        
+        $id= $this->session->userdata('user_id');
+
+        $data['names'] = $this->session->userdata('user_name');
+
+        $data['mem_loans'] = $this->Loan_model->get_loan_member($id);
+        
+        $data['main_content'] = 'loans/show_general';
+        $this->load->view('layouts/main',$data);
+    }
     
     
     public function add_loan_member(){
@@ -226,13 +238,12 @@ class Loans extends CI_Controller {
            //      redirect('loans/show_loans');
            // }
            //$this->form_validation->set_message('validate_member','Member already has a loan!');
-           $this->Loan_model->add_loan($member,$amount,$date,$id,$interest);
+           if($this->Loan_model->add_loan($member,$amount,$date,$id,$interest)){
                 $this->session->set_flashdata('Loan_added', 'The loan has been added');
                 //Redirect to index page with error above
                 redirect('loans/show_loans');
-           
-
-           
+           }
+          
 
            //$this->form_validation->set_message('validate_amount','Amount exceeds the amount in the system, try again later!');
          
@@ -491,9 +502,93 @@ class Loans extends CI_Controller {
         $pdf->render();
         $pdf->stream($name . "-" . $names . ".pdf");
         }
+     }
+
+     public function get_member_loan_info($id,$names){
+        $membership= 'member';
+
+        $data['progress'] = $this->Loan_model->get_loan_prog($id,$membership);
+
+        $loan_info = $this->Loan_model->get_member_loan($id);
+
+        $data['loan_date'] = $loan_info->loan_date;
+
+        $loan_amount= $loan_info->amount;
+
+        $data['loan_amount'] = $loan_amount;
+
+        $data['loans'] = $this->Loan_model->get_member_loans($id);
+
+        $loan_interest= $loan_info->interest;
+
+        $data['loan_interest'] = $loan_interest;
+
+        $data['loan_total'] = $loan_amount + $loan_interest;
+
+        $data['names'] = $names;
+
+        $data['id'] = $id;
 
 
+        $data['main_content'] = 'loans/member_loan_progress';
+        $this->load->view('layouts/main',$data);
 
+        
+        // $this->load->view('loans/member_loan_progress', array('id' => $id,'names' =>$names,'progress' => $progress,'loan_date'=> $loan_date, 'loan_amount'=>$loan_amount,'loan_interest'=>$loan_interest,'loan_total'=>$loan_total), true);
+        
+     }
+
+     public function get_member_id($member){
+
+        $this->db->where('names',$member);
+        $this->db->from('members');
+
+        $info = $this->db->get();
+
+        if($info->num_rows > 0){
+
+            return $info->row()->id;
+        }
+        else
+            return FALSE;
+    }
+
+     public function get_member_loan_info2(){
+        $membership= 'member';
+
+        $names = $this->session->userdata('user_name');
+
+        $id = $this->get_member_id($names);
+
+        $data['progress'] = $this->Loan_model->get_loan_prog($id,$membership);
+
+        $loan_info = $this->Loan_model->get_member_loan($id);
+
+        $data['loan_date'] = $loan_info->loan_date;
+
+        $loan_amount= $loan_info->amount;
+
+        $data['loan_amount'] = $loan_amount;
+
+        $data['loans'] = $this->Loan_model->get_member_loans($id);
+
+        $loan_interest= $loan_info->interest;
+
+        $data['loan_interest'] = $loan_interest;
+
+        $data['loan_total'] = $loan_amount + $loan_interest;
+
+        $data['names'] = $this->session->userdata('user_name');
+
+        $data['id'] = $id;
+
+
+        $data['main_content'] = 'loans/member_loan_progress2';
+        $this->load->view('layouts/main',$data);
+
+        
+        // $this->load->view('loans/member_loan_progress', array('id' => $id,'names' =>$names,'progress' => $progress,'loan_date'=> $loan_date, 'loan_amount'=>$loan_amount,'loan_interest'=>$loan_interest,'loan_total'=>$loan_total), true);
+        
      }
 
      public function get_loan_progress_non_member($id,$names){

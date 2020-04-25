@@ -58,28 +58,29 @@
 
 
 <div class="clear-fix"></div>
-    <div class="container-fluid  contentBody2" style="background-color: white;">
-      <div class="row-fluid">
-        <div class="span7">
-          
-          <div style="margin:0 0 10px 10px;">
-			<!--SIDEBAR CONTENT-->
-			<img src="<?php echo base_url(); ?>assets/css/finance3.jpg">
-          </div>
-         
-        </div><!--/span-->
+      <div class="container-fluid  contentBody2" style="background-color: white;">
+        <div class="row-fluid">
+          <div class="span7">
+            
+              <div style="margin:0 0 10px 10px;">
+  			<!--SIDEBAR CONTENT-->
+  			          <img src="<?php echo base_url(); ?>assets/css/finance3.jpg">
+              </div>
+           
+          </div><!--/span-->
 
-        <div class="span5">
-   		<div class="forms">
-        <?php $this->load->view($main_content); ?>
-      </div>
-			
-        </div><!--/span-->
-		</div><!--/row-->
+          <div class="span5">
+     		      <div class="forms">
+                  <?php $this->load->view($main_content); ?>
+              </div>
+  			
+          </div><!--/span-->
+  		</div><!--/row-->
+      
       <hr>
 
       <footer>
-        <p align="center"><b>&copy; Ganadores Investment Club,2019</b></p>
+          <p align="center"><b>&copy; Ganadores Investment Club,2019</b></p>
       </footer>
     </div><!--/.fluid-container-->
 </div>

@@ -1,4 +1,4 @@
-<h3>Fines list</h3>
+<h3>Chairman's Bag list</h3>
 
 <?php if($this->session->flashdata('amount_excess')) : ?>
     <?php echo '<p class="error">' .$this->session->flashdata('amount_excess') . '</p>'; ?>
@@ -9,6 +9,7 @@
     <tr>
       <th >No</th>
       <th >Names</th>
+      <th>Date</th>
       <th >Amount Paid</th>
       <th >Fines</th>
     </tr>
@@ -19,10 +20,11 @@
   	
     
     <tr>  
-    <td style="width:25%;"><?php echo $chair->member_id; ?></td>
-    <td style="width:25%;"><?php echo $chair->member; ?></td>
-    <td style="width:25%;"><?php echo $chair->amount; ?><?php $total_paid += $chair->amount; ?></td>
-    <td style="width:25%;"><?php echo $chair->fine; ?><?php $total_fines += $chair->fine; ?></td>
+    <td style="width:20%;"><?php echo $chair->member_id; ?></td>
+    <td style="width:20%;"><?php echo $chair->member; ?></td>
+    <td style="width:20%;"><?php echo $chair->date; ?></td>
+    <td style="width:20%;"><?php echo $chair->amount; ?><?php $total_paid += $chair->amount; ?></td>
+    <td style="width:20%;"><?php echo $chair->fine; ?><?php $total_fines += $chair->fine; ?></td>
     </tr>
   <?php endforeach; ?>
 
@@ -30,6 +32,7 @@
 
   <tfoot>
     <td>TOTAL</td>
+    <td></td>
     <td></td>
     <td><?php echo $total_paid; ?></td>
     <td><?php echo $total_fines; ?></td>

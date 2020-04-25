@@ -24,7 +24,7 @@ class Savings_model extends CI_Model {
 
 		$append = $amount;
 
-	 	$original_date = '2019-06-01';
+	 	$original_date = '2019-06-06';
 
 	 	$after_range = 0;
         
@@ -372,11 +372,40 @@ class Savings_model extends CI_Model {
     		return FALSE;
     }
 
+    public function show_fines_member($id){
+
+
+    	$this->db->from('fines');
+    	$this->db->where('member_id', $id);
+
+    	$fines = $this->db->get();
+
+    	if($fines->num_rows > 0){
+    		return $fines->result();
+    	}
+    	else
+    		return FALSE;
+    }
+
 
     public function show_balances(){
 
     	$this->db->from('total_balances');
     	$this->db->where('total_balances >' , 0);
+
+    	$balances = $this->db->get();
+
+    	if($balances->num_rows > 0){
+    		return $balances->result();
+    	}
+    	else
+    		return FALSE;
+    }
+
+    public function show_balances_member($id){
+    	
+    	$this->db->from('balances');
+    	$this->db->where('member_id', $id);
 
     	$balances = $this->db->get();
 
@@ -571,6 +600,20 @@ class Savings_model extends CI_Model {
 			return FALSE;
     }
 
+    public function get_total_balances_table2($id){
+
+    	$this->db->from('total_balances');
+		$this->db->where('member_id',$id);
+		$balance_total = $this->db->get();
+
+		if($balance_total->num_rows > 0){
+			return $balance_total->row();
+		}
+		else
+			return FALSE;
+    }
+
+
     public function get_total_balances_paid($id){
 
     	$this->db->from('total_balances');
@@ -600,17 +643,16 @@ class Savings_model extends CI_Model {
 
 
     public function get_max_payment_id(){
-    	$this->db->from('payments');
+    	
+		$this->db->select_max('id');
+		$result = $this->db->get('payments')->row();  
 		
-		$this->db->order_by('id', 'DESC');
-		$this->db->limit(1);
-		$result = $this->db->get();
 		
-		if ($result->num_rows() > 0) {
-			return  $result->row()->id;
+		if ($result) {
+			return $result->id;
 		}
-		
-		return FALSE;
+		else
+			return FALSE;
     }
 
     public function get_max_fines_id($member_id){
@@ -649,6 +691,19 @@ class Savings_model extends CI_Model {
 
 		if($fines_total->num_rows > 0){
 			return $fines_total->row()->total_fines;
+		}
+		else
+			return FALSE;
+    }
+
+    public function get_total_fines_table2($id){
+
+    	$this->db->from('total_fines');
+		$this->db->where('member_id',$id);
+		$fines_total = $this->db->get();
+
+		if($fines_total->num_rows > 0){
+			return $fines_total->row();
 		}
 		else
 			return FALSE;
@@ -710,7 +765,7 @@ class Savings_model extends CI_Model {
 
     			$actual_balance = $balance->pay_balance;
 
-    			$actual_amount_owed = $balance->balance;
+    			$actual_amount_owed = $balance->Balance;
 
     			$actual_paid = $balance->amount_paid;
 
@@ -1222,6 +1277,23 @@ class Savings_model extends CI_Model {
     		return FALSE;
     }
 
+    public function get_annual_savings2($id){
+
+    	$today = date('Y-m-d');
+
+    	$year = date('Y',strtotime($today));
+
+    	$year2 = $year - 1;
+    	
+		$query = $this->db->query("SELECT * FROM ranges WHERE member_id = $id AND ranges.saving_sched BETWEEN '$year2-06-06' AND '$year-06-06'");
+
+    	if($query->num_rows > 0){
+    		return $query->result();
+    	}
+    	else 
+    		return FALSE;
+    }
+
 
     public function get_annual_savings_total($id){
 
@@ -1499,10 +1571,12 @@ class Savings_model extends CI_Model {
 			$fine_added = $this->db->insert('fines',$data);
 
 			$fine_total += $fine;
-			$this->db->update('total_fines',array('total_fines' => $fine_total) ,array('member_id'=>$test_id));
 			
 
 		}
+
+		$this->db->update('total_fines',array('total_fines' => $fine_total) ,array('member_id'=>$id));
+			
 
 		if($payments_passed){
 			return TRUE;
@@ -1624,9 +1698,11 @@ class Savings_model extends CI_Model {
 			$balance_added = $this->db->insert('balances',$data);
 
 			$balance_total += $Balance;
-			$this->db->update('total_balances',array('total_balances' => $balance_total) ,array('member_id'=>$test_id));
+			
 			
 		}
+
+		$this->db->update('total_balances',array('total_balances' => $balance_total) ,array('member_id'=>$id));
 
 		if($payments_passed){
 			return TRUE;

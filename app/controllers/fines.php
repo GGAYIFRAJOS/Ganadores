@@ -97,6 +97,51 @@ public function show_fines(){
     }
 }
 
+public function get_user_id(){
+
+        $names = $this->session->userdata('user_name');
+
+        $this->db->where('names', $names);
+        $this->db->from('members');
+        $info = $this->db->get();
+
+        if($info->num_rows() > 0){
+            return $info->row()->id;
+        }
+        else
+            return false;
+    }
+
+public function show_fines_member(){
+
+    $names = $this->session->userdata('user_name');
+
+    $id = $this->get_user_id();
+
+    $fines = $this->Savings_model->show_fines_member($id);
+
+    if($fines){
+            $data['fines'] = $fines;
+
+            $data['total_fine'] = $this->Savings_model->get_total_fines_table2($id);
+
+            $data['names'] = $names;
+
+            $data['id'] = $id;
+
+            $data['main_content'] = 'fines/show2';
+            $this->load->view('layouts/main',$data);
+    }
+
+    else{
+
+        $data['error'] = 'There are currently no fines in the system';
+
+        $data['main_content'] = 'fines/show2';
+        $this->load->view('layouts/main',$data);
+    }
+}
+
 
 public function get_fines($id,$names){
         $id = $id;

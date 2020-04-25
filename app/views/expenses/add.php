@@ -2,7 +2,7 @@
 <p>Please fill out the form below to create a new Member</p>
 <!--Display Errors-->
 <?php echo validation_errors('<p class="text-error">'); ?>
- <?php echo form_open('members/add_expense'); ?>
+ <?php echo form_open('members/add_expenses'); ?>
 <!--Field: First Name-->
 <table width="30%" border="0" cellpadding="5" align="center" >
 

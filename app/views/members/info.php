@@ -2,7 +2,7 @@
 <?php if($this->session->flashdata('refreshed')) : ?>
     <?php echo '<p class="text-success">' .$this->session->flashdata('refreshed') . '</p>'; ?>
 <?php endif; ?>
-<div class="frm_heading"><span>Member Info <a href="<?php echo base_url(); ?>members/refresh_info/<?php echo $id; ?>"><span class="button_cart">LOANS</span></a></td></span></a><a href="<?php echo base_url(); ?>members/refresh_member_savings/<?php echo $id; ?>"><span class="button_cartx">SAVINGS</span></a></td></span></a></div>
+<div class="frm_heading"><span>Member Info <td></span></a><a href="<?php echo base_url(); ?>members/refresh_member_savings/<?php echo $id; ?>"><span class="button_cartx">SAVINGS</span></a></td></span></a></div>
 
 <div class="frm_inputs">
 <div class="manage_menu"><a href="<?php echo base_url(); ?>transactions/view_info_report/<?php echo $id ?>" style="margin-left: 12px;"><button class="btn-primary">PRINT MEMBER INFORMATION<img src="<?php echo base_url(); ?>public/images/pdf.png" /></button></a></div>
@@ -106,43 +106,6 @@
 
 <div class="clearFix"></div>
 
-<H3 style="text-align:center;"><u>LOANS</u></H3>
-<div class="manage_menu"><a href="<?php echo base_url(); ?>loans/get_loan_progress_member/<?php echo $id ?>/<?php echo $names ?>" style="margin-left: 12px;"><button class="btn-primary">PRINT LOAN INFORMATION<img src="<?php echo base_url(); ?>public/images/pdf.png" /></button></a></div>
-
-
-	<table class="tablesorter" cellspacing="1">
-		  <thead>
-		    <tr>
-		      <th>No</th>
-		      <th>Member</th>
-		      <th>Amount Paid </th>
-		      <th>Balance</th>
-		      <th>Due Date</th>
-		      
-		       	      
-		    </tr>
-		  </thead>
-		  <tbody>
-		  
-		  <?php foreach ($loans as $loan) : ?>
-		  	
-		    <tr>  
-		    <td style="width:20%;"><?php echo $loan->member_id; ?></td>
-		    <td style="width:20%;"><?php echo $loan->names; ?></td>
-		    <td style="width:20%;"><?php echo $loan->amount_paid; ?></td>
-		     <td style="width:20%;"><?php echo $loan->balance; ?></td>
-		     <td style="width:20%;"><?php echo $loan->due_date; ?></td>
-		   
-		   
-		    
-		    </tr>
-		  <?php endforeach; ?>
-
-		  </tbody>
-		    
-		  </tbody>
-</table>
-
 <H3 style="text-align:center;"><u>FINES</u></H3>
 <div class="manage_menu"><a href="<?php echo base_url(); ?>fines/get_fines/<?php echo $id ?>/<?php echo $names ?>" style="margin-left: 12px;"><button class="btn-primary">PRINT FINE INFORMATION<img src="<?php echo base_url(); ?>public/images/pdf.png" /></button></a></div>
 
@@ -177,6 +140,8 @@
 		    
 		  </tbody>
 </table>
+
+<div class="clearFix"></div>
 
 <H3 style="text-align:center;"><u>BALANCES</u></H3>
 <div class="manage_menu"><a href="<?php echo base_url(); ?>balances/get_balances/<?php echo $id ?>/<?php echo $names ?>" style="margin-left: 12px;"><button class="btn-primary">PRINT BALANCE INFORMATION<img src="<?php echo base_url(); ?>public/images/pdf.png" /></button></a></div>

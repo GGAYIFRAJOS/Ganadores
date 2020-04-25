@@ -21,159 +21,75 @@ class Members extends CI_Controller {
     }
 
 
-    // public function refresh_info($id){
 
-    //     $loan_member = $this->Loan_model->get_loan_member($id);
-
-    //     $today = date('Y-m-d');
-
-    //     //$today = new DateTime($today);
-
-
-    //    if($loan_member){
-
-    //         $loan = $loan_member;
-
-    //         $due_date = $loan->due_date;
-
-    //         //$due_date = new DateTime($due_date);
-
-    //         if( $today > $due_date){
-                    
-
-    //                 $member_id = $loan->member_id;
-
-    //                 $new_due_date = strtotime('+1 month',strtotime($due_date));
-
-    //                 $new_due_date = date('Y-m-d',$new_due_date);
-
-    //                 $fine_amount = $loan->balance * 0.05;
-
-    //                 $total_amount = $loan->balance + $fine_amount;
-
-    //                 $loan_date = $loan->loan_date;
-
-    //                 $loan_days = date('d',strtotime($loan_date));
-
-    //                 $loan_month = date('m',strtotime($loan_date));
-
-    //                 $fine_days = date('d',strtotime($today));
-
-    //                 $fine_month = date('m',strtotime($today));
-
-                    
-
-    //                 if($fine_month - $loan_month){
-    //                     $range = ($fine_month - $loan_month) + 1;
-    //                 }
-    //                 else{
-    //                     $range = ($loan_month - $fine_month) + 1;
-    //                 }
-
-    //                 $last_sched_date = strtotime("+$range months",strtotime($loan_date));
-
-    //                 $last_sched_date = date('Y/m/d',$last_sched_date);
-
-    //                 $prev_range = $range - 1;
-
-    //                 $prev_sched_date = strtotime("+$prev_range months",strtotime($loan_date));
-
-    //                 $prev_sched_date = date('Y/m/d',$prev_sched_date);
-
-    //                 $range_dates = "$prev_sched_date - $last_sched_date";
-
-
-    //                 $data = array(
-    //                     'names' => $loan->names,
-    //                     'identification_id' => $loan->member_id,
-    //                     'fine' => $fine_amount,
-    //                     'membership' => 'member',
-    //                     'loan_id' => $loan->id,
-    //                     'loan_range' => $range,
-    //                     'balance' => $total_amount,
-    //                     'loan_range_dates' => $range_dates,
-    //                     'prev_amount' => $loan->balance,
-    //                     'total_amount' => $total_amount
-    //                 );
-
-    //                 $this->db->insert('loan_progress',$data);
-                
-
-    //                 $this->db->update('member_loan_info',array('balance' => $total_amount,'due_date' =>  $new_due_date),array('member_id' => $member_id ));
-    //         }
-            
-    //     }
-
-
-        
-
-
-    //     $balances = $this->Savings_model->calculate_balances_member($id);
-
-    //     $fines = $this->Savings_model->fine_savings_member($id);
-
-    //     $this->session->set_flashdata('refreshed', 'The member information has been refreshed succesfully!');
-    //         redirect('members/get_member_info/'.$id);
-
-    // }
 
 
     public function refresh_info($id){
 
+        //FETCHING MEMBER PAYMENT INFORMATION FROM THE PAYMENTS TABLE INTO THE LOAN_PAYMENT VARIABLE(ARRAY)
         $loan_payment = $this->Loan_model->get_member_payments($id);
 
+        //GETTING HE CURRENT DATE
         $today = date('Y-m-d');
 
+        //GETTING MEMBER LOAN INFO FROM MEMBER LOAN INFO TABLE AND INSTATIATING IT WITH THE LOAN_INFO VARIABLE(ARRAY)
         $loan_info = $this->Loan_model->get_member_loan($id);
 
-        //$today = new DateTime($today);
 
-        //$balance = $loan_info->balance;
-
+        //EXTRACTING THE LOAN DATE FROM  LOAN_INFO ARRAY
         $loan_date = $loan_info->loan_date;
 
+        //EXTRACTING THE LOAN ID FROM  LOAN_INFO ARRAY
         $loan_id = $loan_info->id;
 
+        //EXTRACTING THE MEMBER NAMES FROM  LOAN_INFO ARRAY
         $name = $loan_info->names;
 
+        //GETTING THE BALANCE OF THE FIRST RANGE USING THE GET_FIRST_RANGE_BALLANCE FROM THE LOAN_RANGES TABLE
         $balance_from_range = $this->Loan_model->get_first_range_balance($loan_id,$id);
-
         $balance = $balance_from_range->range_balance;
 
-
-        // $next_loan_date = strtotime("+1 month", strtotime($loan_date));
-
-        // $next_loan_date = date('Y-m-d',$next_loan_date);
-
+        //SETTING THE RANGE VARIABLE range_var TO 1
         $range_var = 1;
 
+        //SETTING THE PREV_AMOUNT TO 0
         $prev_amount = 0;
 
+        //SETTING THE PREV_AMOUNT VARIABLE TO 0
         $prev_amount_total = 0;
 
 
-       foreach($loan_payment as $payment){
+        //USING A FOREACH LOOP TO ITERATE THROUGH ALL THE PAYMENTS FETCHED FROM THE PAYMENTS TABLE ON LINE 30
+        foreach($loan_payment as $payment){
 
-        //$new_balance = $balance - $payment->payment_amount;
-
+            //GETTING THE PAYMENT DATE FOR THE PAYMENT
             $payment_date = $payment->payment_date;
 
+            //GETTING THE PAYMENT AMOUNT
             $amount = $payment->payment_amount;
 
-            //$prev_balance = 0;
-
+            //GETTING THE PAYMENT ID
             $payment_id = $payment->id;
 
+            //DETERMINING THE RANGE IN WHICH THE PAYMENT WAS MADE USING THE GET_PAYMENT_RANGE FUNCTION IN THE LOAN_MODEL
             $range = $this->Loan_model->get_payment_range($id,$payment_date);
 
+            //GETTING INFORMATION ABOUT THE RANGE USING THE GET_RANGE_INFO FUNCTION IN THE LOAN MODEL
             $range_info = $this->Loan_model->get_range_info($loan_id,$range);
+
+            //IF THE RANGE IN WHICH THE PAYMENT HAS BEEN MADE IS NOT THE SAME AS THE PREVIOUS ONE OR THE SAME AS THE FIRST MONTH OF THE LOAN RECEPTION
 
             if($range != $range_var){
 
+                //DETERMINING THE DIFFERENCE BETWEEN THE RANGES
                 $range_diff = $range - $range_var;
 
+                //IF THE RANGE DIFFERENCE IS GREATER THAN 1
                 if($range_diff > 1){
 
+                   
+
+                    //WE ITERATE THROUGH THE COMPLETELY UNPAID MONTHS USING A FOREACH LOOP
                     for($i = 0; $i < ($range_diff - 1); $i++){
 
                         $balance_prev = $balance;
@@ -223,12 +139,46 @@ class Members extends CI_Controller {
 
                     $days_pay = date('z',strtotime($payment_date));
 
+                    if(date('n',strtotime($payment_date)) == 12){
+                            if(date('L',strtotime($payment_date))){
+                                $days_pay = $days_pay + 366;
+                            }
+                            else
+                                $days_pay = $days_pay + 365;
+                            
+                    }
+
                     $days = $days_pay - $days_max_prev;
+
+                    $neg = -1;
+
+                    if($days < 1){
+                        $days = $days * $neg;
+                    }
+                    else
+                        $days = $days * 1;
 
 
                     $days_curr = date('z',strtotime($max_date_curr));
 
+                    if(date('n',strtotime($max_date_curr)) == 12){
+                            if(date('L',strtotime($max_date_curr))){
+                                $days_curr = $days_curr + 366;
+                            }
+                            else
+                                $days_curr = $days_curr + 365;
+                            
+                    }
+
                     $days_div = $days_curr - $days_max_prev;
+
+
+                    if($days_div < 1){
+                        $days_div = $days_div * $neg;
+                    }
+                    else
+                        $days_div = $days_div * 1;
+
 
 
                     $month_balance = $balance * 0.05;
@@ -309,6 +259,15 @@ class Members extends CI_Controller {
 
                         $days_curr = date('z',strtotime($max_date_curr));
 
+                        if(date('n',strtotime($max_date_curr)) == 12){
+                            if(date('L',strtotime($max_date_curr))){
+                                $days_curr = $days_curr + 366;
+                            }
+                            else
+                                $days_curr = $days_curr + 365;
+                            
+                        }
+
 
                         $prev_range = $range - 1;
 
@@ -321,9 +280,32 @@ class Members extends CI_Controller {
 
                         $days_pay = date('z',strtotime($payment_date));
 
+                        if(date('n',strtotime($payment_date)) == 12){
+                            if(date('L',strtotime($payment_date))){
+                                $days_pay = $days_pay + 366;
+                            }
+                            else
+                                $days_pay = $days_pay + 365;
+                            
+                        }
+
                         $days = $days_pay - $days_prev;
 
+                        $neg = -1;
+
+                        if($days < 1){
+                            $days = $days * $neg;
+                        }
+                        else
+                            $days = $days * 1;
+
                         $days_div = $days_curr - $days_prev;
+
+                        if($days_div < 1){
+                            $days_div = $days_div * $neg;
+                        }
+                        else
+                            $days_div = $days_div * 1;
 
 
                         $month_balance = $balance * 0.05;
@@ -462,7 +444,26 @@ class Members extends CI_Controller {
 
                             $days_loan = date('z',strtotime($loan_date));
 
+                            if(date('n',strtotime($max_date))== 12){
+                                    if(date('L',strtotime($max_date))){
+                                        $days_max = $days_max + 366;
+                                    }
+                                    else
+                                        $days_max = $days_max + 365;
+                                    
+                            }
+
+                           
+
                             $days_div = $days_max - $days_loan;
+
+                            $neg = -1;
+
+                            if($days_div < 1){
+                                $days_div = $days_div * $neg;
+                            }
+                            else
+                                $days_div = $days_div * 1;
 
                            
 
@@ -470,7 +471,23 @@ class Members extends CI_Controller {
 
                             $days_2 = date('z',strtotime($payment_date));
 
+                            if(date('n',strtotime($payment_date)) == 12){
+                                    if(date('L',strtotime($payment_date))){
+                                        $days_2 = $days_pay + 366;
+                                    }
+                                    else
+                                        $days_2 = $days_pay + 365;
+                                    
+                            }
+
                             $days = $days_2 - $days_1;
+
+
+                            if($days < 1){
+                                $days = $days * $neg;
+                            }
+                            else
+                                $days = $days * 1;
 
 
 
@@ -532,9 +549,28 @@ class Members extends CI_Controller {
 
                             $days_prev = date('z',strtotime($prev_max_date));
 
+
                             $days_max = date('z',strtotime($max_date));
 
+                            if(date('n',strtotime($days_max)) == 12){
+                                    if(date('L',strtotime($days_max))){
+                                        $days_max = $days_max + 366;
+                                    }
+                                    else
+                                        $days_max = $days_max + 365;
+                                    
+                            }
+
+
                             $days_div = $days_max -  $days_prev;
+
+                            $neg = -1;
+
+                            if($days_div < 1){
+                                $days_div = $days_div * $neg;
+                            }
+                            else
+                                $days_div = $days_div * 1;
 
 
 
@@ -542,7 +578,23 @@ class Members extends CI_Controller {
 
                             $days_pay = date('z',strtotime($payment_date));
 
+                            if(date('n',strtotime($prev_max_date)) == 12){
+                                    if(date('L',strtotime($prev_max_date))){
+                                        $days_max_2 = $days_max_2 + 366;
+                                    }
+                                    else
+                                        $days_max_2 = $days_max_2 + 365;
+                                    
+                            }
+
                             $days = $days_pay - $days_max_2;
+
+
+                            if($days < 1){
+                                $days = $days * $neg;
+                            }
+                            else
+                                $days = $days * 1;
 
 
 
@@ -741,15 +793,15 @@ class Members extends CI_Controller {
 
             $range_info = $this->Loan_model->get_range_info($loan_id,$range);
 
-            if($range != $range_var){
+            if($range != 1){
 
-                $range_diff = $range - $range_var;
+                $range_diff = $range - 1;
 
                 if($range_diff > 1){
 
                     $balance_prev = $balance;
 
-                    for($i = 0; $i < ($range_diff - 1); $i++){
+                    for($i = 0; $i <= ($range_diff - 1); $i++){
 
                         $balance_prev = $balance;
 
@@ -759,7 +811,7 @@ class Members extends CI_Controller {
 
                         ++$range_var;
 
-                        $range_dates = $this->Dates_model->get_loan_range_dates($range_var,$loan_date);
+                        $range_dates = $this->Dates_model->get_loan_range_dates($range,$loan_date);
 
                          $total_owed = $balance_prev + $fine;
 
@@ -1240,7 +1292,58 @@ class Members extends CI_Controller {
 
         $data['names'] = $this->Member_model->get_names($id);
 
-        $data['loans'] = $this->Loan_model->get_member_loans($id);
+       
+
+        $data['years'] = $this->Dates_model->get_member_years($id);
+
+        $data['total_savings'] = $this->Savings_model->get_member_savings_total($id);
+
+        $data['savings'] = $this->Savings_model->get_annual_savings2($id);
+
+        $data['ranges'] = $this->Dates_model->calculate_range_today();
+
+        $data['main_content'] = 'members/info';
+        $this->load->view('layouts/main',$data);
+    }
+
+
+    public function get_user_id(){
+
+        $names = $this->session->userdata('user_name');
+
+        $this->db->where('names', $names);
+        $this->db->from('members');
+        $info = $this->db->get();
+
+        if($info->num_rows() > 0){
+            return $info->row()->id;
+        }
+        else
+            return false;
+    }
+
+
+    public function get_member_info2(){
+
+        $id = $this->get_user_id();
+        
+        $data['id'] = $id;
+
+        $names = $this->session->userdata('user_name');
+
+        $data['names'] = $names;
+
+        $data['fines'] = $this->Savings_model->get_fines($id);
+
+        $data['balances'] = $this->Savings_model->get_balances($id);
+
+        $data['total_fines'] = $this->Savings_model->get_total_fines_member($id);
+
+        $data['total_balances'] = $this->Savings_model->get_total_balances_member($id);
+
+        $data['names'] = $this->Member_model->get_names($id);
+
+       
 
         $data['years'] = $this->Dates_model->get_member_years($id);
 
@@ -1250,9 +1353,11 @@ class Members extends CI_Controller {
 
         $data['ranges'] = $this->Dates_model->calculate_range_today();
 
-        $data['main_content'] = 'members/info';
+        $data['main_content'] = 'members/info2';
         $this->load->view('layouts/main',$data);
     }
+
+    
 
 
     public function get_non_member_inform($id){
@@ -1337,21 +1442,20 @@ class Members extends CI_Controller {
 
             //$names = $this->input->post('names');
 
-            $names = $this->get_member_names();
+            $names = $this->input->post('names');
 
             
 
             $name_arr = array();
 
            $i = 1;
+           $j = 0;
 
-            foreach($att as $key ) {
+            foreach($names as $name ) {
 
-                $id = $i;
+                if(in_array("$name", $att)){
 
-                if($key == 1){
-
-                    $insert = $this->db->insert('attendance',array('member_id'=>$id,'date'=> $date,'status'=>'present','fine'=>0));
+                    $insert = $this->db->insert('attendance',array('member_id'=>$i,'member'=>$name,'date'=> $date,'status'=>'present','fine'=>0));
                 }
                 else{
 
@@ -1359,18 +1463,19 @@ class Members extends CI_Controller {
 
                     $fine = 30000;
 
-                    $insert = $this->db->insert('attendance',array('member_id'=>$id,'date'=> $date,'status'=>'absent','fine'=>$fine));
+                    $insert = $this->db->insert('attendance',array('member_id'=>$i,'member'=>$name,'date'=> $date,'status'=>'absent','fine'=>$fine));
 
-                    $insert = $this->db->insert('fines',array('member_id'=>$id,'fine_range'=> $fine_range,'balance'=>$fine,'amount_paid'=>0,'fine'=>$fine));
+                    $insert = $this->db->insert('fines',array('member_id'=>$i,'fine_range'=> $fine_range,'balance'=>$fine,'amount_paid'=>0,'fine'=>$fine));
 
-                    $total_fines = $this->Savings_model->get_total_fines_table($id);
+                    $total_fines = $this->Savings_model->get_total_fines_table($i);
 
                     $total_fine = $total_fines + $fine;
 
-                    $update = $this->db->update('total_fines',array('total_fines'=>$total_fine),array('member_id'=>$id));
+                    $update = $this->db->update('total_fines',array('total_fines'=>$total_fine),array('member_id'=>$i));
                 }
 
                 ++$i;
+                ++$j;
             }
 
             $this->session->set_flashdata('member_updated', 'The member attendance has been updated');
@@ -1400,7 +1505,7 @@ class Members extends CI_Controller {
 
             //$names = $this->input->post('names');
 
-            $names = $this->get_member_names();
+            $names = $this->input->post('names');
 
             
 
@@ -1408,17 +1513,20 @@ class Members extends CI_Controller {
 
             $i = 1;
 
-            foreach($att as $key ) {
+            $j = 0;
 
-                $id = $i;
 
-                if($key == 1){
 
-                    $names = $this->get_member_name($id);
+            foreach($names as $name ) {
+
+
+                if(in_array("$name", $att)){
+
+                    
 
                     $date_range = $this->Dates_model->calculate_range($date);
 
-                    $insert = $this->db->insert('chairman',array('member_id'=>$id,'member' => $names,'date'=> $date,'status'=>'payed','fine'=>0 ,'amount' => 5000,'date_range' => $date_range));
+                    $insert = $this->db->insert('chairman',array('member_id'=>$i,'member' => $name,'date'=> $date,'status'=>'payed','fine'=>0 ,'amount' => 5000,'date_range' => $date_range));
                 }
                 else{
 
@@ -1428,18 +1536,20 @@ class Members extends CI_Controller {
 
                     $fine = 5000;
 
-                    $insert = $this->db->insert('chairman',array('member_id'=>$id,'member' => $names,'date' => $date,'status' => 'not_payed','fine' => 5000 ,'amount' => 0,'date_range' => $date_range));
+                    $insert = $this->db->insert('chairman',array('member_id'=>$i,'member' => $name,'date' => $date,'status' => 'not_payed','fine' => 5000 ,'amount' => 0,'date_range' => $date_range));
 
-                    $insert = $this->db->insert('fines',array('member_id'=>$id,'fine_range'=> $fine_range,'balance'=>$fine,'amount_paid'=>0,'fine'=>$fine));
+                    $insert = $this->db->insert('fines',array('member_id'=>$i,'fine_range'=> $fine_range,'balance'=>$fine,'amount_paid'=>0,'fine'=>$fine));
 
                     $total_fines = $this->Savings_model->get_total_fines_table($id);
 
                     $total_fine = $total_fines + $fine;
 
-                    $update = $this->db->update('total_fines',array('total_fines'=>$total_fine),array('member_id'=>$id));
+                    $update = $this->db->update('total_fines',array('total_fines'=>$total_fine),array('member_id'=>$i));
                 }
 
                 ++$i;
+
+                ++$j;
             }
 
             $this->session->set_flashdata('member_updated', 'The member attendance has been updated');
@@ -1460,6 +1570,28 @@ class Members extends CI_Controller {
         $this->load->view('layouts/main',$data);
     }
 
+    public function attendance_list(){
+
+        $data['attendance'] = $this->get_attendance_general();
+        
+        //Load view and layout
+        $data['main_content'] = 'members/attendance_show';
+        $this->load->view('layouts/main',$data);
+    }
+
+    public function attendance_list2(){
+
+        $names = $this->session->userdata('user_name');
+        $id = $this->get_member_id($names);
+
+        $data['attendance'] = $this->get_attendance_member2($id);
+
+        
+        //Load view and layout
+        $data['main_content'] = 'members/attendance2';
+        $this->load->view('layouts/main',$data);
+    }
+
     public function member_chairman_list($id){
 
         $data['chairman'] = $this->get_chairman_member($id);
@@ -1471,11 +1603,39 @@ class Members extends CI_Controller {
         $this->load->view('layouts/main',$data);
     }
 
+    public function chairman_list_member(){
+
+        $names = $this->session->userdata('user_name');
+
+        $id = $this->get_member_id($names);
+
+        $data['chairman'] = $this->get_chairman_member($id);
+
+        $data['id'] = $id;
+        
+        //Load view and layout
+        $data['main_content'] = 'chairman/show';
+        $this->load->view('layouts/main',$data);
+    }
+
+
+      public function member_attendance_list($id){
+
+        $data['attendance'] = $this->get_attendance_member($id);
+
+        $data['id'] = $id;
+        
+        //Load view and layout
+        $data['main_content'] = 'member/attendance_show_member';
+        $this->load->view('layouts/main',$data);
+    }
+
 
 
     public function get_chairman_general(){
         $this->db->order_by('date', 'DESC');
-        $chairman = $this->db->get_from('chairman');
+        $this->db->from('chairman');
+        $chairman = $this->db->get();
 
         if($chairman->num_rows > 0){
             return $chairman->result();
@@ -1485,10 +1645,39 @@ class Members extends CI_Controller {
         }
     }
 
+    public function get_attendance_general(){
+        $this->db->order_by('date', 'DESC');
+        $this->db->from('attendance');
+        $attendance = $this->db->get();
+
+        if($attendance->num_rows > 0){
+            return $attendance->result();
+        }
+        else{
+            return FALSE;
+        }
+    }
+
+    public function get_attendance_member2($id){
+
+        $this->db->order_by('date', 'DESC');
+        $this->db->from('attendance');
+        $this->db->where('member_id', $id);
+        $attendance = $this->db->get();
+
+        if($attendance->num_rows > 0){
+            return $attendance->result();
+        }
+        else{
+            return FALSE;
+        }
+    }
+
     public function get_chairman_member($id){
         $this->db->where('member_id', $id);
         $this->db->order_by('date', 'DESC');
-        $chairman = $this->db->get_from('chairman');
+        $this->db->from('chairman');
+        $chairman = $this->db->get();
 
         if($chairman->num_rows > 0){
             return $chairman->result();
@@ -1535,7 +1724,8 @@ class Members extends CI_Controller {
 
     public function get_expenses(){
         $this->db->order_by('date', 'DESC');
-        $expense = $this->db->get_from('expenses');
+        $this->db->from('expenses');
+        $expense = $this->db->get();
 
         if($expense->num_rows > 0){
             return $expense->result();
@@ -1591,11 +1781,11 @@ class Members extends CI_Controller {
      public function get_member_name($id){
 
         $this->db->where('member_id', $id);
-        
+        $this->db->from('members');
 
-        $info = $this->db->get('members');
+        $info = $this->db->get();
 
-        if($info->num_rows > 0){
+        if($info){
 
             return $info->row()->names;
         }

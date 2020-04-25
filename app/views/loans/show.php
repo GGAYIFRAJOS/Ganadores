@@ -31,7 +31,7 @@
     
     <tr>
      <td><?php echo $mem->member_id; ?></td>
-      <td><a href="<?php echo base_url(); ?>members/get_member_info/<?php echo $mem->member_id; ?>"><?php echo $mem->names; ?></a></td>
+      <td><a href="<?php echo base_url(); ?>loans/get_member_loan_info/<?php echo $mem->member_id; ?>/<?php echo $mem->names; ?>"><?php echo $mem->names; ?></a></td>
       <td><?php echo $mem->amount; ?></td>
       <td><?php echo $mem->interest; ?></td>
       
@@ -106,7 +106,7 @@
 </table>
 
 <div style='display:none'>
-              <div class="frm_container" id="dialog-modal-pay">
+              <div class="frm_container" id="dialog-modal-pay$mem->member_id;">
                     <div class="frm_heading"><span>Member Loan Payment Confirmation</span></div>
                     <div class="frm_inputs">
                       
@@ -206,14 +206,14 @@
 
 <script type="text/javascript">
       $( '.button_cart1' ).button({ icons: {primary:'ui-icon-cart'} });
-      $( '.button_cart1').colorbox({width:'30%', inline:true, href:'#dialog-modal-pay'});
-    </script>
+      $( '.button_cart1').colorbox({width:'30%', inline:true, href:'#dialog-modal-pay$mem->member_id;');
+</script>
 
 
 <script type="text/javascript">
       $( '.button_cart2' ).button({ icons: {primary:'ui-icon-cart'} });
       $( '.button_cart2').colorbox({width:'30%', inline:true, href:'#dialog-modal-pay2'});
-    </script>
+</script>
 
 <script type="text/javascript">
       $( '.btn-freeze' ).button({ icons: {primary:'ui-icon-locked'} });

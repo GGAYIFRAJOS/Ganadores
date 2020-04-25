@@ -16,6 +16,21 @@ class Transactions_model extends CI_Model {
 		return FALSE;
 	}
 
+	public function get_member_transactions2(){
+
+		$names = $this->session->userdata('user_name');
+
+		$this->db->from('transactions');
+		$this->db->where('names',$names);
+		$this->db->order_by('date','DESC');
+		$transactions = $this->db->get();
+
+		if($transactions->num_rows > 0){
+			return $transactions->result();
+		}
+		return FALSE;
+	}
+
 	public function get_member_transactions($year,$id){
 		$query = $this->db->query("SELECT * FROM transactions WHERE `member_id` = '$id' AND `date` BETWEEN '$year-01-01' AND '$year-12-31'");
 

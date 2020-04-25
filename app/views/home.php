@@ -8,9 +8,9 @@
 <?php if($this->session->flashdata('need_login')) : ?>
     <?php echo '<p class="text-error">' .$this->session->flashdata('need_login') . '</p>'; ?>
 <?php endif; ?>
-
 <h1><u>Ganadores Investment Club</u></h1>
 <h3>Loans and Savings Management System</h3>
+
 
 <p>This app us a dynamic application designed to help Ganadores Investment Club manage  day to day savings and Loans Transactions.</p>
 
@@ -157,7 +157,6 @@
 
 <div class="clearFix"></div>
 
-<div style="text-align: left;"><span class="button_cart">CHAIRMAN'S BAG</span></td></div>
 
 <div class="clearFix"></div>
 

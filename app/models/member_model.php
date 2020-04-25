@@ -113,7 +113,7 @@ class Member_model extends CI_Model {
 
 		for($i = 1;$i<61;$i++){
 
-			$original_date = '2019-01-06';
+			$original_date = '2019-06-06';
 
 			$savings_sched = strtotime("+$i months", strtotime($original_date));
 
@@ -240,6 +240,21 @@ class Member_model extends CI_Model {
 		return FALSE;
 		
 	}
+
+	public function get_member_id($member){
+
+        $this->db->where('names',$member);
+        $this->db->from('members');
+
+        $info = $this->db->get();
+
+        if($info->num_rows > 0){
+
+            return $info->row()->id;
+        }
+        else
+            return FALSE;
+    }
 
 	function get_member_info($id)
 	{

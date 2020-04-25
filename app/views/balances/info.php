@@ -21,7 +21,7 @@
     <tr>  
     <td style="width:25%;"><?php echo ++$i; ?></td>
     <td style="width:25%;"><?php echo $dates; ?></td>
-    <td style="width:25%;"><?php echo $balance->balance; ?><?php $total_balances += $balance->balance; ?></td>
+    <td style="width:25%;"><?php echo $balance->Balance; ?><?php $total_balances += $balance->Balance; ?></td>
     <td style="width:25%;"><?php echo $balance->status; ?></td>
     </tr>
   <?php endforeach; ?>
@@ -36,6 +36,8 @@
   </tfoot>
   
 </table>
+
+<div class="clearFix"></div>
 
 
 <div style='display:none'>

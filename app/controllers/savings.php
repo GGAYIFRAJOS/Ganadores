@@ -57,9 +57,24 @@ class Savings extends CI_Controller {
     public function show_savings_member($id,$names){
 
 
+
         $data['savings'] = $this->Savings_model->select_savings($id);
 
         $data['names'] = $names;
+
+        
+        //Load view and layout
+        $data['main_content'] = 'savings/show_member';
+        $this->load->view('layouts/main',$data);
+    }
+
+    public function show_savings_member2(){
+        
+        $id= $this->session->userdata('user_id');
+
+        $data['savings'] = $this->Savings_model->select_savings($id);
+
+        $data['names'] = $this->session->userdata('user_name');
 
         
         //Load view and layout

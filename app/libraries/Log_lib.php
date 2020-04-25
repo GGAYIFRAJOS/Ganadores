@@ -45,11 +45,11 @@ class Log_lib{
 
 	public function change_password($username,$password)
 	{
-		$password = md5($password.config_item('encryption_key'));
+		$password = md5($password);
 
 		$this->CI->db->where(array('username' => $username));
 
-		$result = $this->CI->db->update('lend_admin',array('password'=>$password));
+		$result = $this->CI->db->update('users',array('password'=>$password));
 
 		 
 		if($result){

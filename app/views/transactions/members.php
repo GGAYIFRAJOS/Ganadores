@@ -1,4 +1,4 @@
-<H4>MEMBER TRANSACTIONS FOR <?php echo urldecode($name); ?> YEAR <?php echo $year; ?></H4>
+<H4>MEMBER TRANSACTIONS FOR <?php echo urldecode($name); ?></H4>
 
 <div class="manage_menu"><a href="<?php echo base_url(); ?>transactions/view_report_member/<?php echo $year; ?>/<?php echo $id; ?>/<?php echo urldecode($name); ?>" style="margin-left: 12px;"><button class="btn-primary">PRINT TRANSACTIONS<img src="<?php echo base_url(); ?>public/images/pdf.png" /></button></a></div>
 

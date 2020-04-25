@@ -88,14 +88,19 @@ class Loan_model extends CI_Model {
 	 * Add entry in lend_loan table
 	 * @param array $param
 	 */
+
+	public function get_max_loan_id(){
+
+		$this->db->select_max('id');
+		$result = $this->db->get('member_loan_info')->row();  
+		return $result->id;
+	}
 	
 
 	function add_loan($member,$amount,$date,$member_id,$interest)
 	{
 		
 		//$month_days = date('t',strtotime($date));
-		
-		$monthly_pay = $amount_interest;
 
 		$total_amount = $amount;
 
@@ -105,15 +110,7 @@ class Loan_model extends CI_Model {
 		
 		$date = date('Y-m-d',strtotime($date));
 
-		$max_id = $this->get_max_loan_id();
-
-
-		if($max_id == 0){
-			$loan_id = 1;
-		}
-		else{
-			$loan_id = $max_id;
-		}
+		$loan_id = $member_id;
 
 		for($i = 1; $i < 25; $i++){
 
@@ -129,7 +126,7 @@ class Loan_model extends CI_Model {
 					'member_id' => $member_id,
 					'loan_id' => $loan_id,
 					'max_date' => $max_date,
-					'loan_range'=> $range,
+					'loan_range'=> 1,
 					'range_balance' => $total_amount
 				);
 
@@ -222,28 +219,24 @@ class Loan_model extends CI_Model {
 		
 		//$date[0] = date('Y-m-d',strtotime($original_date));
 
-		$end_date = strtotime("+24 months",strtotime($loan_date));
+		
 
-		$end_date = date('Y-m-d', $end_date);
-
-		$ranges = $this->createDateRange($loan_date, $end_date);
+		//$ranges = $this->createDateRange($loan_date, $end_date);
 
 
 		$date_range = 0;
 	
 
 		
-		for($i = 1;$i<61;$i++){
+		for($i = 1;$i<25;$i++){
 
-			$date_range = $i;
-		
-			$start_date = $ranges[--$i];
+			++$date_range;
 
-			$end_date = $ranges[++$i];
+			$end_date = strtotime("+$i months",strtotime($loan_date));
 
-			$date_range = $i;
+			$end_date = date('Y-m-d', $end_date);
 
-			$start = strtotime($start_date);
+			$start = strtotime($loan_date);
 			$end =   strtotime($end_date);
 			$user =  strtotime($user_date);
 			//$date_from_user = '2009-08-28';
@@ -270,7 +263,7 @@ class Loan_model extends CI_Model {
 
 		    $range = [];
 		    foreach ($dateRange as $date) {
-		        $range[] = $date->format($format);
+		        $range[] = $date->format('Y-m-d');
 		    }
 
 		    return $range;
@@ -431,7 +424,7 @@ class Loan_model extends CI_Model {
 		$loan_date = $info->loan_date;
 
 		if($payment_days > $loan_days){
-			if($payment_month - $loan_month){
+			if($payment_month > $loan_month){
 				$range = ($payment_month - $loan_month) + 1;
 			}
 			else{
@@ -475,7 +468,7 @@ class Loan_model extends CI_Model {
 			$this->db->update('member_loan_info',$data,array('member_id'=>$borrower_id));
 		}
 		else{
-			if($payment_month - $loan_month){
+			if($payment_month > $loan_month){
 				$range = ($payment_month - $loan_month);
 			}
 			else{
@@ -914,7 +907,7 @@ class Loan_model extends CI_Model {
 
  
 
-        if($loans->num_rows > 0){
+        if($loans){
             return $loans->row();
         }
     }
@@ -978,20 +971,7 @@ class Loan_model extends CI_Model {
 		}
 	}
 
-	public function get_max_loan_id(){
 
-		$this->db->from('member_loan_info');
-		
-		$this->db->order_by('id', 'DESC');
-		$this->db->limit(1);
-		$result = $this->db->get();
-		
-		if ($result->num_rows() > 0) {
-			return  $result->row()->id;
-		}
-		
-		return FALSE;
-	}
 
 
 	public function get_max_non_loan_id(){

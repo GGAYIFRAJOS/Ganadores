@@ -91,6 +91,51 @@ public function show_balances(){
     }
 }
 
+public function get_user_id(){
+
+        $names = $this->session->userdata('user_name');
+
+        $this->db->where('names', $names);
+        $this->db->from('members');
+        $info = $this->db->get();
+
+        if($info->num_rows() > 0){
+            return $info->row()->id;
+        }
+        else
+            return false;
+}
+
+public function show_balances_member(){
+    $names = $this->session->userdata('user_name');
+
+    $id = $this->get_user_id();
+
+    $balances = $this->Savings_model->show_balances_member($id);
+
+    if($balances){
+
+            $data['balances'] = $balances;
+
+            $data['total_balance'] = $this->Savings_model->get_total_balances_table2($id);
+
+            $data['names'] = $names;
+
+            $data['id'] = $id;
+
+            $data['main_content'] = 'balances/show2';
+            $this->load->view('layouts/main',$data);
+    }
+
+    else{
+
+        $data['error'] = 'There are currently no balances in the system';
+
+        $data['main_content'] = 'balances/show2';
+        $this->load->view('layouts/main',$data);
+    }
+}
+
 
 public function get_balances($id,$names){
         $id = $id;

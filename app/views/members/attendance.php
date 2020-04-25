@@ -31,8 +31,8 @@ $report = $value->result();
  <?php foreach($report as $mem): ?>
   <tr>
     <td><?php echo $mem->member_id; ?></td>
-    <td><?php echo $mem->names; ?><?php echo '<input type="hidden" name="names[]" value="$mem->names"/>';?></td>
-    <td align="center"><?php echo '<input type="hidden" name="att[]" value="0"/>';?><?php echo '<input type="checkbox"   name="att[]" value="1"  />'; ?></td>
+    <td><?php echo $mem->names; ?><?php echo "<input type=hidden name=names[] value=$mem->names />";?></td>
+    <td align="center"><?php echo "<input type=checkbox   name=att[] value=$mem->names />"; ?></td>
     
   </tr>
  <?php endforeach; ?>

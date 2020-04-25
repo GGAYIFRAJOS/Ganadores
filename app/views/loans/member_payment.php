@@ -43,3 +43,9 @@ $data = array(
 <?php echo form_close(); ?>
 
 <hr>
+
+<script type="text/javascript">
+$(function() {
+    $("#dos").datepicker();
+});
+</script>

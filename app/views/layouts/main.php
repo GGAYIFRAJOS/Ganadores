@@ -34,11 +34,14 @@
 <script type="text/javascript" src="<?php echo base_url() ?>assets/jquery/plugins/jquery.tablesorter.pager.js"></script>
 <script type="text/javascript" src="<?php echo base_url() ?>assets/jquery/plugins/jquery.tablesorter.widgets.min.js"></script>
 
+<base href="http://localhost/mytodo/" />
+
 </head>
 <body >
  <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container-fluid">
+
           <a class="brand" href="<?php echo base_url(); ?>home/index">Ganadores</a>
 
           <div class="nav-collapse collapse">
@@ -63,20 +66,25 @@
           
           <div style="margin:0 0 5px 5px;">
 			<!--SIDEBAR CONTENT-->
-			<?php $this->menu->generate(); ?>
+            <?php if($this->session->userdata('user_role') == 'admin'): ?>
+      			<?php $this->menu->generate(); ?>
+            <?php else: ?>
+            <?php  $this->menu2->generate(); ?>
+            <?php endif; ?>
           </div>
-         
+
         </div><!--/span-->
 
         <div class="span10" style="min-height: 530px;">
-   		<!--MAIN CONTENT-->
-			<?php $this->load->view($main_content); ?>
+   		
+			  <?php $this->load->view($main_content); ?>
+      
         </div><!--/span-->
 		</div><!--/row-->
       <hr>
 
       <footer>
-        <p align="center"><b>&copy; Ganadores Investment Club,2019</b></p>
+        <p align="center"><b>&copy; Ganadores Investment Club,2019 :DESIGNED BY GGAYI FRANKLIN JOSEPH</b></p>
       </footer>
     </div><!--/.fluid-container-->
 </div>

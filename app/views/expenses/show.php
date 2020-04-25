@@ -10,6 +10,7 @@
       <th >No</th>
       <th >Description</th>
       <th >Amount</th>
+      <th>Date</th>
       
     </tr>
   </thead>
@@ -21,6 +22,7 @@
     <tr>  
     <td style="width:25%;"><?php echo $expense->id; ?></td>
     <td style="width:25%;"><?php echo $expense->description; ?></td>
+    <td style="width:25%;"><?php echo $expense->date; ?></td>
     <td style="width:25%;"><?php echo $expense->amount; ?><?php $total_paid += $expense->amount; ?></td>
    
     </tr>
@@ -29,7 +31,8 @@
   </tbody>
 
   <tfoot>
-    <td>TOTAL</td>
+    <td><b>TOTAL</b></td>
+    <td></td>
     <td></td>
     <td><?php echo $total_paid; ?></td>
     

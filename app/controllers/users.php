@@ -189,7 +189,8 @@ class Users extends CI_Controller {
   {
     $this->load->library('form_validation');
      $this->form_validation->set_rules('password','Password','trim|xss_clean|required');
-    $this->form_validation->set_rules('password_conf','Confirm Password','trim||xss_clean|required|matches[password]');
+    $this->form_validation->set_rules('password2','Confirm Password','trim|xss_clean|required|matches[password]');
+
     if($this->form_validation->run() == FALSE)
     {
       $names = $this->session->userdata('user_name');
@@ -201,7 +202,7 @@ class Users extends CI_Controller {
       if($this->log_lib->change_password($username,$password))
       {
         $this->session->set_flashdata('change_password', 'Password has been changed succesfully');
-        $this->load->view('layouts/main',array('main_content'=>'users/login'));
+        redirect('users/login/', 'refresh');
       }else
       {
         return FALSE;

@@ -7,12 +7,12 @@ class Dates_model extends CI_Model {
 
 public function calculate_range($user_date){
 
-		$original_date = '2019-01-06';
+		$original_date = '2019-06-06';
 
 		
 		//$date[0] = date('Y-m-d',strtotime($original_date));
 
-		$ranges = $this->createDateRange("2019-01-06", "2022-01-06");
+		$ranges = $this->createDateRange("2019-06-06", "2022-06-06");
 
 
 		$date_range = 0;
@@ -49,14 +49,14 @@ public function calculate_range($user_date){
 
 public function calculate_range_today(){
 
-		$original_date = '2019-06-01';
+		$original_date = '2019-06-06';
 
 		$today = date('Y-m-d');
 
 		
 		//$date[0] = date('Y-m-d',strtotime($original_date));
 
-		$ranges = $this->createDateRange("2019-01-06", "2022-01-06");
+		$ranges = $this->createDateRange("2019-06-06", "2022-06-06");
 
 		
 		for($i = 1;$i<61;$i++){
@@ -169,7 +169,7 @@ public function createDateRange($startDate, $endDate, $format = "Y-m-d"){
 
  public function get_range_dates($range){
 
-    	$original_date = "2017-06-06";
+    	$original_date = "2019-06-06";
 
     	$first_date = strtotime("+$range months",strtotime($original_date));
 
